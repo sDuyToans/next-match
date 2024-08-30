@@ -3,6 +3,7 @@ import {Inter} from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import TopNav from "@/components/navbar/TopNav";
+import {SessionProvider} from "next-auth/react";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -20,10 +21,12 @@ export default function RootLayout({
         <html lang="en">
         <body>
         <Providers>
-            <TopNav/>
-            <main className={"container mx-auto"}>
-                {children}
-            </main>
+            <SessionProvider>
+                <TopNav/>
+                <main className={"container mx-auto"}>
+                    {children}
+                </main>
+            </SessionProvider>
         </Providers>
         </body>
         </html>

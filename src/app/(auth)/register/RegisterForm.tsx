@@ -6,6 +6,7 @@ import {GiPadlock} from "react-icons/gi";
 import {Button, Input} from "@nextui-org/react";
 import {RegisterSchema} from "@/lib/schemas/registerSchema";
 import {registerUser} from "@/app/actions/authActions";
+import {handleFormServerError} from "@/lib/utils";
 
 export default function RegisterForm() {
     const {
@@ -24,14 +25,7 @@ export default function RegisterForm() {
         if (result.status === "success") {
             console.log("User registered successfully");
         } else {
-            if (Array.isArray(result.error)) {
-                result.error.forEach((e) => {
-                    const fieldName = e.path.join('.') as 'email' | 'name' | 'password';
-                    setError(fieldName, {message: e.message})
-                })
-            } else {
-                setError('root.serverError', {message: result.error})
-            }
+            handleFormServerError(result, setError);
         }
     }
 

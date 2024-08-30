@@ -8,6 +8,12 @@ import {compare} from "bcryptjs";
 
 export const {handlers, auth, signIn, signOut} = NextAuth({
     callbacks: {
+        // async jwt({token, trigger, session}) {
+        //     if (trigger === 'update' && session) {
+        //         return {...token, ...session?.user}
+        //     }
+        //     return {...token, ...session}
+        // },
         async session({token, session}) {
             if (token.sub && session.user) {
                 session.user.id = token.sub

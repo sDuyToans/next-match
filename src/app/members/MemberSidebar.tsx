@@ -3,29 +3,25 @@ import React from 'react'
 import {Member} from "@prisma/client";
 import {Card, CardBody, CardFooter} from "@nextui-org/card";
 import {Image} from "@nextui-org/image";
-import {calculateAge} from "@/lib/utils";
+import {calculateAge, transformImageUrl} from "@/lib/utils";
 import {Divider} from "@nextui-org/divider";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {Button} from "@nextui-org/react";
 
 type Props = {
-    member: Member
+    member: Member,
+    navLinks: { name: string, href: string }[]
 }
 
-export default function MemberSidebar({member}: Props) {
+export default function MemberSidebar({member, navLinks}: Props) {
     const pathName = usePathname();
-    const basePath = `/members/${member.userId}`;
 
-    const navLinks = [
-        {name: 'Profile', href: `${basePath}`},
-        {name: 'Photos', href: `${basePath}/photos`},
-        {name: 'Chat', href: `${basePath}/chat`}
-    ]
 
     return (
         <Card className={"w-full mt-10 items-center h-[80vh]"}>
-            <Image height={200} width={200} src={member.image || '/images/user.png'} alt={"User profile main image"}
+            <Image height={200} width={200} src={transformImageUrl(member.image) || '/images/user.png'}
+                   alt={"User profile main image"}
                    className={"rounded-full mt-6 aspect-square object-cover"}/>
             <CardBody>
                 <div className={"flex flex-col items-center"}>
