@@ -34,7 +34,8 @@ type MessageDto = {
 type UserFilters = {
     ageRange: number[],
     orderBy: string,
-    gender: string[]
+    gender: string[],
+    withPhoto: boolean
 }
 
 type PagingParams = {
@@ -57,5 +58,6 @@ type GetMemberParams = {
     gender?: string,
     pageNumber?: string,
     pageSize?: string,
-    orderBy?: string
+    orderBy?: string,
+    withPhoto?: string
 }

@@ -2,7 +2,7 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {FaFemale, FaMale} from "react-icons/fa";
 import {Selection} from "@nextui-org/react";
 import useFilterStore from "@/hooks/useFilterStore";
-import {useEffect, useTransition} from "react";
+import {ChangeEvent, useEffect, useTransition} from "react";
 import usePaginationStore from "@/hooks/usePaginationStore";
 
 export const useFilters = () => {
@@ -19,13 +19,13 @@ export const useFilters = () => {
         setPage: state.setPage
     }));
 
-    const {gender, ageRange, orderBy} = filters;
+    const {gender, ageRange, orderBy, withPhoto} = filters;
 
     useEffect(() => {
-        if (gender || ageRange || orderBy) {
+        if (gender || ageRange || orderBy || withPhoto) {
             setPage(1)
         }
-    }, [gender, ageRange, orderBy, setPage]);
+    }, [gender, ageRange, orderBy, setPage, withPhoto]);
 
     useEffect(() => {
         startTransition(() => {
@@ -36,10 +36,11 @@ export const useFilters = () => {
             if (orderBy) searchParams.set('orderBy', orderBy);
             if (pageSize) searchParams.set('pageSize', pageSize.toString());
             if (pageNumber) searchParams.set('pageNumber', pageNumber.toString());
+            searchParams.set('withPhoto', withPhoto.toString())
 
             router.replace(`${pathName}?${searchParams}`);
         })
-    }, [ageRange, gender, orderBy, router, pathName, pageSize, pageNumber]);
+    }, [ageRange, gender, orderBy, router, pathName, pageSize, pageNumber, withPhoto]);
 
     const orderByList = [
         {label: 'Last active', value: 'updated'},
@@ -67,12 +68,17 @@ export const useFilters = () => {
         else setFilters('gender', [...gender, value]);
     }
 
+    const handleWithPhotoToggle = (e: ChangeEvent<HTMLInputElement>) => {
+        setFilters('withPhoto', e.target.checked);
+    }
+
     return {
         orderByList,
         genderList,
         selectAge: handleAgeSelect,
         selectGender: handleGenderSelect,
         selectOrder: handleOrderSelect,
+        selectWithPhoto: handleWithPhotoToggle,
         filters,
         isPending
     }
