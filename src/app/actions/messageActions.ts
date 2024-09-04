@@ -95,7 +95,7 @@ export async function getMessageThread(recipientId: string) {
     }
 }
 
-export async function getMessageByContainer(container: string) {
+export async function getMessageByContainer(container?: string | null, cursor?: string, limit = 10) {
     try {
         const userId = await getAuthUserId();
 
@@ -105,11 +105,32 @@ export async function getMessageByContainer(container: string) {
         }
 
         const message = await prisma.message.findMany({
-            where: conditions,
-            select: messageSelect
+            where: {
+                ...conditions,
+                ...(cursor ? {created: {lte: new Date(cursor)}} : {})
+            },
+            orderBy: {
+                created: 'desc'
+            },
+            select: messageSelect,
+            take: limit + 1
         })
 
-        return message.map(message => mapMessageToMessageDto(message));
+        let nextCursor: string | undefined;
+
+        if (message.length > limit) {
+            const nextItem = message.pop();
+            nextCursor = nextItem?.created.toISOString();
+        } else {
+            nextCursor = undefined;
+        }
+
+        const messagesToReturn = message.map(message => mapMessageToMessageDto(message));
+
+        return {
+            messages: messagesToReturn,
+            nextCursor
+        }
     } catch (err) {
         console.log(err);
         throw err;
