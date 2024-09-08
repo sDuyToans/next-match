@@ -8,7 +8,7 @@ import {useNotificationChannel} from "@/hooks/useNotificationChannel";
 import useMessageStore from "@/hooks/useMessageStore";
 import {getUnreadMessageCount} from "@/app/actions/messageActions";
 
-export default function Providers({children, userId}: { children: ReactNode, userId: string | null }) {
+export default function Providers({children, userId, profileComplete}: { children: ReactNode, userId: string | null, profileComplete: boolean }) {
     const isUnreadCountSet = useRef(false);
     const {updateUnreadCount} = useMessageStore(state => ({
         updateUnreadCount: state.updateUnreadCount
@@ -27,8 +27,8 @@ export default function Providers({children, userId}: { children: ReactNode, use
         isUnreadCountSet.current = true;
     }, [setUnreadCount, userId]);
 
-    usePresenceChannel();
-    useNotificationChannel(userId);
+    usePresenceChannel(userId, profileComplete);
+    useNotificationChannel(userId, profileComplete);
     return (
         <NextUIProvider>
             <ToastContainer position={"bottom-right"} hideProgressBar className={"z-50"}/>
